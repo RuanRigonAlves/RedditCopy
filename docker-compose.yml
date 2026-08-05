@@ -1,0 +1,78 @@
+services:
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+
+    container_name: redditcopy_mysql
+
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+
+    container_name: redditcopy_php
+
+    restart: unless-stopped
+
+    working_dir: /var/www/html
+
+    volumes:
+      - ./backend/:/var/www/html
+
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+
+    container_name: redditcopy_nginx
+
+    restart: unless-stopped
+
+    ports:
+      - "8000:80"
+
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+    depends_on:
+      - php
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+
+    container_name: redditcopy_frontend
+
+    restart: unless-stopped
+
+    ports:
+      - "5173:5173"
+
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+    depends_on:
+      - nginx
+
+volumes:
+  mysql_data:
