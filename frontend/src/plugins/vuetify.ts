@@ -4,17 +4,36 @@
  * Framework documentation: https://vuetifyjs.com
  */
 
-import { createVuetify } from 'vuetify'
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/styles'
+import "@fortawesome/fontawesome-free/css/all.css";
+import { createVuetify } from "vuetify";
+import "@mdi/font/css/materialdesignicons.css";
+import "vuetify/styles";
+import { aliases, fa } from "vuetify/iconsets/fa";
 
 export default createVuetify({
   theme: {
-    defaultTheme: 'system',
+    defaultTheme: "system",
     utilities: false,
+    themes: {
+      light: {
+        colors: {
+          background: "#0E1113",
+          surface: "#0E1113",
+          primary: "#D93900",
+        },
+      },
+
+      dark: {
+        colors: {
+          background: "#0E1113",
+          surface: "#0E1113",
+          primary: "#D93900",
+        },
+      },
+    },
   },
   display: {
-    mobileBreakpoint: 'md',
+    mobileBreakpoint: "md",
     thresholds: {
       xs: 0,
       sm: 600,
@@ -24,4 +43,11 @@ export default createVuetify({
       xxl: 2138,
     },
   },
-})
+  icons: {
+    defaultSet: "fa",
+    aliases,
+    sets: {
+      fa,
+    },
+  },
+});
