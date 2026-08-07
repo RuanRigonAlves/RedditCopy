@@ -31,7 +31,14 @@
 
       <!-- Right Side Login/Etc -->
       <div>
-        <v-btn variant="tonal" class="bg-primary" rounded> Login </v-btn>
+        <v-btn
+          variant="tonal"
+          class="bg-primary"
+          rounded
+          @click="auth.openLogin()"
+        >
+          Login
+        </v-btn>
       </div>
     </section>
   </v-app-bar>
@@ -46,9 +53,11 @@
 </template>
 
 <script setup>
+import { useAuthDialogStore } from "@/features/auth/stores/authStore";
 import { ref } from "vue";
 
 const drawer = ref(false);
+const auth = useAuthDialogStore();
 </script>
 
 <style scoped>
