@@ -47,7 +47,9 @@
     <v-card-actions class="justify-center pa-6">
       <span class="text-medium-emphasis"> Already have an account? </span>
 
-      <v-btn variant="text" color="text-primary"> Log In </v-btn>
+      <v-btn variant="text" color="text-primary" @click="auth.openLogin">
+        Log In
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
