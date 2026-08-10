@@ -11,6 +11,16 @@
 </template>
 
 <script setup>
-import AuthDialog from "./features/auth/components/AuthDialog.vue";
-import AppBar from "./layout/AppBar.vue";
+import { onMounted } from 'vue';
+
+import AuthDialog from './features/auth/components/AuthDialog.vue';
+import AppBar from './layout/AppBar.vue';
+
+import { useAuthStore } from './features/auth/stores/authStore.js';
+
+const authStore = useAuthStore();
+
+onMounted(() => {
+  authStore.getMe();
+});
 </script>

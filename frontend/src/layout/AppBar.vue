@@ -31,14 +31,38 @@
 
       <!-- Right Side Login/Etc -->
       <div>
+        <v-btn v-if="authStore.loading" variant="text">
+          <v-progress-circular
+            indeterminate
+            size="22"
+            width="3"
+            color="primary"
+          />
+        </v-btn>
+
         <v-btn
+          v-else-if="!authStore.isAuthenticated"
           variant="tonal"
           class="bg-primary"
           rounded
-          @click="auth.openLogin()"
+          @click="authStoreDialog.openLogin()"
         >
           Login
         </v-btn>
+
+        <v-menu v-else>
+          <template #activator="{ props }">
+            <v-btn v-bind="props">
+              {{ authStore.user?.name }}
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item @click="authStore.logout">
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </section>
   </v-app-bar>
@@ -53,11 +77,13 @@
 </template>
 
 <script setup>
-import { useAuthDialogStore } from "@/features/auth/stores/authStore";
-import { ref } from "vue";
+import { useAuthDialogStore } from '@/features/auth/stores/authDialogStore';
+import { useAuthStore } from '@/features/auth/stores/authStore';
+import { ref } from 'vue';
 
 const drawer = ref(false);
-const auth = useAuthDialogStore();
+const authStoreDialog = useAuthDialogStore();
+const authStore = useAuthStore();
 </script>
 
 <style scoped>

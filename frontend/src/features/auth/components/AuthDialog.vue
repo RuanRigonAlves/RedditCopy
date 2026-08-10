@@ -1,11 +1,11 @@
 <template>
-  <v-dialog v-model="auth.dialogOpen">
-    <component :is="auth.currentComponent"></component>
+  <v-dialog v-model="authDialogStore.dialogOpen">
+    <component :is="authDialogStore.currentComponent"></component>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { useAuthDialogStore } from "@/features/auth/stores/authStore.js";
+import { useAuthDialogStore } from '@/features/auth/stores/authDialogStore.js';
 
-const auth = useAuthDialogStore();
+const authDialogStore = useAuthDialogStore();
 </script>

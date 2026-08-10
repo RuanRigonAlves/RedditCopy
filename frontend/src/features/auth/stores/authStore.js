@@ -1,42 +1,96 @@
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
-import LoginForm from "../components/LoginForm.vue";
-import RegisterForm from "../components/RegisterForm.vue";
+import * as authService from '../services/authService';
 
-export const useAuthDialogStore = defineStore("authDialog", () => {
-  const dialogOpen = ref(false);
-  const mode = ref(null);
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref(null);
+  const token = ref(localStorage.getItem('token'));
+  const loading = ref(false);
+  const authLoading = ref(false);
 
-  function openLogin() {
-    mode.value = "login";
-    dialogOpen.value = true;
-  }
-
-  function openRegister() {
-    mode.value = "register";
-    dialogOpen.value = true;
-  }
-
-  function close() {
-    dialogOpen.value = false;
-  }
-
-  const currentComponent = computed(() => {
-    switch (mode.value) {
-      case "register":
-        return RegisterForm;
-      default:
-        return LoginForm;
-    }
+  const isAuthenticated = computed(() => {
+    return !!token.value;
   });
 
+  async function login(credentials) {
+    loading.value = true;
+
+    try {
+      const response = await authService.login(credentials);
+
+      user.value = response.user;
+      token.value = response.token;
+
+      localStorage.setItem('token', response.token);
+
+      return response;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function register(data) {
+    loading.value = true;
+
+    try {
+      const response = await authService.register(data);
+
+      user.value = response.user;
+      token.value = response.token;
+
+      localStorage.setItem('token', response.token);
+
+      return response;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function getMe() {
+    if (!token.value) {
+      return;
+    }
+
+    loading.value = true;
+
+    try {
+      const response = await authService.getMe(token.value);
+
+      user.value = response.user;
+    } catch (error) {
+      logout();
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function logout() {
+    loading.value = true;
+
+    try {
+      if (token.value) {
+        await authService.logout(token.value);
+      }
+    } finally {
+      user.value = null;
+      token.value = null;
+
+      localStorage.removeItem('token');
+
+      loading.value = false;
+    }
+  }
+
   return {
-    dialogOpen,
-    mode,
-    currentComponent,
-    openLogin,
-    openRegister,
-    close,
+    user,
+    token,
+    loading,
+    isAuthenticated,
+    authLoading,
+    login,
+    register,
+    getMe,
+    logout,
   };
 });
