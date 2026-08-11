@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -29,5 +29,43 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getJWTIdentifier()
+     {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'role' => $this->role,
+            'permissions' => $this->permissions(),
+        ];
+    }
+
+    public function permissions(): array
+    {
+        return match ($this->role) {
+            'admin' => [
+                'users.view',
+                'users.create',
+                'users.delete',
+                'posts.view',
+                'posts.create',
+                'posts.delete',
+                'posts.moderate',
+            ],
+
+            'moderator' => [
+                'posts.view',
+                'posts.moderate',
+            ],
+
+            default => [
+                'posts.view',
+                'posts.create',
+            ],
+        };
     }
 }

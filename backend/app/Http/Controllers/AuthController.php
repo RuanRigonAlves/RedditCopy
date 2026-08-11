@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -25,7 +24,7 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        $token = $user->createToken('frontend')->plainTextToken;
+        $token = auth('api')->login($user);
 
         return response()->json([
             'user' => $user,
@@ -40,28 +39,40 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $data['email'])->first();
+        $token = auth('api')->attempt($data);
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if(!$token){
             return response()->json([
-                'message' => 'Email ou senha inválidos.',
-            ], 401);
+                'message' => 'Email ou senha invalidos.'
+            ],401);
         }
 
-        $token = $user->createToken('frontend')->plainTextToken;
-
         return response()->json([
-            'user' => $user,
-            'token' => $token
+            'user' => auth('api')->user(),
+            'token' => $token,
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
+        auth('api')->logout();
 
         return response()->json([
-            'message' => 'Logout realizado com sucesso.',
+            'message' => 'Logout realizado com sucesso',
         ]);
+    }
+
+    public function refresh()
+    {
+        return response()->json([
+            'token' => auth('api')->refresh(),
+        ]);
+    }
+
+    public function claims()
+    {
+        return response()->json([
+            'claims' => auth('api')->payload(),
+        ]);    
     }
 }
