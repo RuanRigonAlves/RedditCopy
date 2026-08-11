@@ -1,5 +1,7 @@
-# Docker
+# Environment
 .env
+.env.*
+!.env.example
 
 # Frontend
 frontend/node_modules/
@@ -7,7 +9,6 @@ frontend/dist/
 
 # Backend
 backend/vendor/
-backend/.env
 
 # Logs
 *.log

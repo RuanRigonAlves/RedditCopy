@@ -15,6 +15,7 @@
           variant="outlined"
           density="comfortable"
           type="email"
+          :rules="[required]"
           :error-messages="errors.email"
         />
 
@@ -25,6 +26,7 @@
           variant="outlined"
           density="comfortable"
           type="password"
+          :rules="[required]"
           :error-messages="errors.password"
         />
 
@@ -69,51 +71,20 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { useLoginForm } from '../composables/useLoginForm';
 import { useAuthDialogStore } from '../stores/authDialogStore';
 import { useAuthStore } from '../stores/authStore';
 
-const authStore = useAuthStore();
 const authDialogStore = useAuthDialogStore();
+const authStore = useAuthStore();
 
-const formData = reactive({
-  email: '',
-  password: '',
-});
-
-const errors = reactive({
-  email: '',
-  password: '',
-  general: '',
-});
-
-function clearErrors() {
-  errors.email = '';
-  errors.password = '';
-  errors.general = '';
-}
-
-function handleErrors(error) {
-  clearErrors();
-
-  if (error?.errors) {
-    errors.email = error.errors.email?.[0] || '';
-    errors.password = error.errors.password?.[0] || '';
-    return;
-  }
-
-  errors.general = error?.message || 'Unable to log in.';
-}
+const { form, formData, errors, required, submit, loading } = useLoginForm();
 
 async function handleLogin() {
-  clearErrors();
+  const success = await submit();
 
-  try {
-    await authStore.login(formData);
-
+  if (success) {
     authDialogStore.close();
-  } catch (error) {
-    handleErrors(error);
   }
 }
 </script>

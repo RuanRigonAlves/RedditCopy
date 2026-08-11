@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true;
 
     try {
-      const response = await authService.getMe(token.value);
+      const response = await authService.getMe();
 
       user.value = response.user;
     } catch (error) {
@@ -70,7 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       if (token.value) {
-        await authService.logout(token.value);
+        await authService.logout();
       }
     } finally {
       user.value = null;
@@ -80,6 +80,19 @@ export const useAuthStore = defineStore('auth', () => {
 
       loading.value = false;
     }
+  }
+
+  async function refreshToken() {
+    const refreshed = await authService.refresh();
+
+    if (!refreshed) {
+      logout();
+      return false;
+    }
+
+    token.value = localStorage.getItem('token');
+
+    return true;
   }
 
   return {
@@ -92,5 +105,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     getMe,
     logout,
+    refreshToken,
   };
 });

@@ -9,12 +9,13 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <v-form @submit.prevent="handleRegister">
+      <v-form ref="form" @submit.prevent="handleRegister">
         <v-text-field
           v-model="formData.name"
           label="Username"
           prepend-inner-icon="mdi mdi-account-outline"
           variant="outlined"
+          :rules="[required]"
           :error-messages="errors.name"
         />
 
@@ -24,6 +25,7 @@
           prepend-inner-icon="mdi mdi-email-outline"
           variant="outlined"
           type="email"
+          :rules="[required]"
           :error-messages="errors.email"
         />
 
@@ -33,6 +35,7 @@
           prepend-inner-icon="mdi mdi-lock-outline"
           type="password"
           variant="outlined"
+          :rules="[required, minPassword]"
           :error-messages="errors.password"
         />
 
@@ -42,6 +45,7 @@
           prepend-inner-icon="mdi mdi-lock-check-outline"
           type="password"
           variant="outlined"
+          :rules="[required, passwordConfirmation]"
           :error-messages="errors.password_confirmation"
         />
 
@@ -84,62 +88,29 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-
 import { useAuthDialogStore } from '../stores/authDialogStore';
 import { useAuthStore } from '../stores/authStore';
+import { useRegisterForm } from '../composables/useRegisterForm';
 
-const authStore = useAuthStore();
 const authDialogStore = useAuthDialogStore();
+const authStore = useAuthStore();
 
-const formData = reactive({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-});
-
-const errors = reactive({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  general: '',
-});
-
-function clearErrors() {
-  errors.name = '';
-  errors.email = '';
-  errors.password = '';
-  errors.password_confirmation = '';
-  errors.general = '';
-}
-
-function handleErrors(error) {
-  clearErrors();
-
-  if (error?.errors) {
-    errors.name = error.errors.name?.[0] || '';
-    errors.email = error.errors.email?.[0] || '';
-    errors.password = error.errors.password?.[0] || '';
-    errors.password_confirmation =
-      error.errors.password_confirmation?.[0] || '';
-
-    return;
-  }
-
-  errors.general = error?.message || 'Unable to create account.';
-}
+const {
+  form,
+  formData,
+  errors,
+  required,
+  minPassword,
+  passwordConfirmation,
+  submit,
+  loading,
+} = useRegisterForm();
 
 async function handleRegister() {
-  clearErrors();
+  const success = await submit();
 
-  try {
-    await authStore.register(formData);
-
+  if (success) {
     authDialogStore.close();
-  } catch (error) {
-    handleErrors(error);
   }
 }
 </script>
