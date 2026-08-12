@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
 
 Route::get('/test', function () {
     return [
@@ -29,4 +30,12 @@ Route::middleware('auth:api')->group(function () {
         'message' => 'Você pode criar posts!',
     ]);
 })->middleware(['auth:api', 'permission:posts.create']);
+});
+
+Route::middleware('auth:api')->group(function (){
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/{post}', [PostController::class, 'show']);
+    Route::put('/posts/{post}', [PostController::class, 'update']);
+    Route::delete('/posts/{post}', [PostController::class,'destroy']);
 });

@@ -55,6 +55,7 @@ class User extends Authenticatable implements JWTSubject
                 'posts.create',
                 'posts.delete',
                 'posts.moderate',
+                'posts.update'
             ],
 
             'moderator' => [
@@ -65,7 +66,13 @@ class User extends Authenticatable implements JWTSubject
             default => [
                 'posts.view',
                 'posts.create',
+                'posts.update'
             ],
         };
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }
