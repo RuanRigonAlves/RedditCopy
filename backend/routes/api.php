@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 
 Route::get('/test', function () {
@@ -38,4 +39,13 @@ Route::middleware('auth:api')->group(function (){
     Route::get('/posts/{post}', [PostController::class, 'show']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class,'destroy']);
+});
+
+Route::get('/posts/{post}/comments', [CommentController::class, 'index']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+    Route::post('/comments/{comment}/replies', [CommentController::class, 'reply']);
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 });
