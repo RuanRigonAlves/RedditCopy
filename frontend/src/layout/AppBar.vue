@@ -4,12 +4,16 @@
     class="justify-between w-100 border-b"
     :flat="true"
   >
-    <section class="flex justify-between w-full mx-2">
+    <section class="flex justify-between w-full mx-1">
       <!-- List Menu -->
-      <div>
-        <v-btn color="primary" @click="drawer = !drawer">
+      <div class="flex items-center gap-1">
+        <v-btn icon @click="drawer = !drawer" :ripple="false" size="40">
           <v-icon icon="mdi mdi-menu" size="24"></v-icon>
         </v-btn>
+
+        <router-link to="/" class="flex">
+          <v-img width="70" src="/images/reddit-logo.svg"></v-img>
+        </router-link>
       </div>
 
       <!-- Search bar -->
