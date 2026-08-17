@@ -4,7 +4,11 @@
       <div class="flex justify-between">
         <div class="flex gap-2">
           <v-avatar size="24">
-            <v-icon class="mdi">mdi-account</v-icon>
+            <v-img
+              :src="
+                post.author?.avatar_url || 'images/profile-default-image.png'
+              "
+            />
           </v-avatar>
 
           <div class="flex items-end text-xs">

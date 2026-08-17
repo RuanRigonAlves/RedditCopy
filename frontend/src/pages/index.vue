@@ -1,5 +1,7 @@
 <template>
   <v-container class="px-0 py-0">
+    <FilterPosts />
+
     <template v-if="loading">
       <v-skeleton-loader v-for="i in 3" :key="i" type="article" class="mb-4" />
     </template>
@@ -9,10 +11,11 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { usePosts } from '@/features/posts/composables/usePosts';
 import PostList from '@/features/posts/components/PostList.vue';
+import FilterPosts from '@/features/posts/components/FilterPosts.vue';
 
 const { posts, loading, error, fetchPosts } = usePosts();
 
