@@ -2,7 +2,7 @@
   <v-card-item>
     <div class="flex justify-between">
       <div class="flex gap-2">
-        <v-avatar size="24">
+        <v-avatar size="32">
           <v-img
             :src="
               post.author?.avatar_url || '/images/profile-default-image.png'
