@@ -1,11 +1,9 @@
 <template>
   <div>
-    <PostCard
-      v-for="post in posts"
-      :key="post.id"
-      :post="post"
-      :to="{ name: 'post', params: { id: post.id } }"
-    />
+    <div v-for="post in posts" :key="post.id">
+      <PostCard :post="post" :to="{ name: 'post', params: { id: post.id } }" />
+      <v-divider> </v-divider>
+    </div>
   </div>
 </template>
 

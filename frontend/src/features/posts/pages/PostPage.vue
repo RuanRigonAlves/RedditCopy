@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="p-0">
     <div>
       <template v-if="postLoading">
         <v-skeleton-loader
@@ -35,13 +35,13 @@
       </template>
     </div>
 
-    <section class="flex flex-col gap-4 mt-4">
+    <v-container class="flex flex-col gap-4">
       <CommentCard
         v-for="comment in comments"
         :key="comment.id"
         :comment="comment"
       />
-    </section>
+    </v-container>
   </v-container>
 </template>
 
